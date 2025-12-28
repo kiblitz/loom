@@ -1,0 +1,7 @@
+(library
+ (name loom_lib)
+ (public_name loom.lib)
+ (inline_tests)
+ (libraries core unix)
+ (preprocess
+  (pps ppx_expect ppx_jane)))
