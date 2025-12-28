@@ -9,7 +9,12 @@ type 'a t
 
 include Monad.S with type 'a t := 'a t
 
-val eval_real : ?buffer_for_recv_size:int -> port:int -> 'a t -> 'a Or_error.t
+val eval_real
+  :  ?buffer_for_recv_size:int
+  -> ?listen_address:string
+  -> port:int
+  -> 'a t
+  -> 'a Or_error.t
 
 module Expert : sig
   val thunk : (unit -> 'a) -> 'a t

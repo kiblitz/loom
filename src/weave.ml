@@ -8,9 +8,15 @@ module Context = struct
         ; buffer_for_recv : Bytes.t
         }
 
-  let real ?(buffer_for_recv_size = 1024) ~port () =
+  let real ?(buffer_for_recv_size = 1024) ?listen_address ~port () =
     let sock = Unix.socket PF_INET SOCK_DGRAM 0 in
-    Unix.bind sock (ADDR_INET (Unix.inet_addr_any, port));
+    let listen_address =
+      Option.value_map
+        listen_address
+        ~default:Unix.inet_addr_any
+        ~f:Unix.inet_addr_of_string
+    in
+    Unix.bind sock (ADDR_INET (listen_address, port));
     let buffer_for_recv = Bytes.create buffer_for_recv_size in
     Real { sock; buffer_for_recv }
   ;;
@@ -50,8 +56,8 @@ end
 
 open Let_syntax
 
-let eval_real ?buffer_for_recv_size ~port { get } =
-  let context = Context.real ?buffer_for_recv_size ~port () in
+let eval_real ?buffer_for_recv_size ?listen_address ~port { get } =
+  let context = Context.real ?buffer_for_recv_size ?listen_address ~port () in
   try
     let result = get context in
     Context.cleanup context;
