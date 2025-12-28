@@ -72,6 +72,23 @@ module Expert = struct
   let thunk f = { get = (fun (_ : Context.t) -> f ()) }
 end
 
+module Time = struct
+  let now =
+    { get =
+        (function
+          | Real { sock = _; buffer_for_recv = _ } -> Time_ns.now ())
+    }
+  ;;
+
+  let wait span =
+    { get =
+        (function
+          | Real { sock = _; buffer_for_recv = _ } ->
+            Unix.sleepf (Time_ns.Span.to_sec span))
+    }
+  ;;
+end
+
 module Io = struct
   let print input ~f =
     { get =

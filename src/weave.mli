@@ -20,6 +20,11 @@ module Expert : sig
   val thunk : (unit -> 'a) -> 'a t
 end
 
+module Time : sig
+  val now : Time_ns.t t
+  val wait : Time_ns.Span.t -> unit t
+end
+
 module Io : sig
   val print_endline : string -> unit t
   val print_string : string -> unit t
